@@ -24,12 +24,14 @@ ui <- fluidPage(
   sidebarLayout(
     # <div=class="col-sm-4">
     sidebarPanel(
-      tags$h3("I'm sidebar panel")
+      tags$h3("I'm a sidebar panel"),
+      
+      checkboxInput("eigenvectors", "Draw eigenvectors", FALSE)
     ),
     
     # <div=class="col-sm-8">
     mainPanel(
-      tags$h3("I'm main panel"),
+      tags$h3("I'm a main panel"),
       
       # 'pca' should be defined in server function
       plotOutput("pca")
@@ -47,12 +49,14 @@ server <- function(input, output) {
       pca_res, 
       data = iris, 
       colour = 'Species', 
-      loadings = T, 
+      loadings = input$eigenvectors, 
       loadings.colour = 'blue', 
-      loadings.label = TRUE, 
+      loadings.label = input$eigenvectors, 
       loadings.label.size = 3
     )
-  })
+  },
+  res = 150,
+  height = 600)
 }
 
 # Run the application 
