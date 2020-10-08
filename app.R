@@ -8,43 +8,52 @@
 #
 
 library(shiny)
+library(ggfortify)
 
-# Define UI for application that draws a histogram
+# get my data
+source("./helper.r")
+
+# Define UI for application that draws a PCA
+# <div class="container-fluid">
 ui <- fluidPage(
-   
-   # Application title
-   titlePanel("Old Faithful Geyser Data"),
-   
-   # Sidebar with a slider input for number of bins 
-   sidebarLayout(
-      sidebarPanel(
-         sliderInput("bins",
-                     "Number of bins:",
-                     min = 1,
-                     max = 50,
-                     value = 30)
-      ),
+  # <h2> and <title> in the head
+  titlePanel("Example PCA on Iris Dataset", windowTitle = "IRIS Dataset PCA"),
+  
+  # define a standard layout, a side for control data, and main area, respectively 1/3 and 2/3
+  # <div=class="row">
+  sidebarLayout(
+    # <div=class="col-sm-4">
+    sidebarPanel(
+      tags$h3("I'm sidebar panel")
+    ),
+    
+    # <div=class="col-sm-8">
+    mainPanel(
+      tags$h3("I'm main panel"),
       
-      # Show a plot of the generated distribution
-      mainPanel(
-         plotOutput("distPlot")
-      )
-   )
+      # 'pca' should be defined in server function
+      plotOutput("pca")
+    )
+  )
 )
 
-# Define server logic required to draw a histogram
-server <- function(input, output) {
-   
-   output$distPlot <- renderPlot({
-      # generate bins based on input$bins from ui.R
-      x    <- faithful[, 2] 
-      bins <- seq(min(x), max(x), length.out = input$bins + 1)
-      
-      # draw the histogram with the specified number of bins
-      hist(x, breaks = bins, col = 'darkgray', border = 'white')
-   })
+# Define server logic required to draw a PCA
+server <- function(input, output) { 
+  # define my output. Render a plot with ggfortify
+  output$pca <- renderPlot({
+    # this is a function in ggfortify which display PCA data
+    # this is returned as the result in renderPlot code block
+    autoplot(
+      pca_res, 
+      data = iris, 
+      colour = 'Species', 
+      loadings = T, 
+      loadings.colour = 'blue', 
+      loadings.label = TRUE, 
+      loadings.label.size = 3
+    )
+  })
 }
 
 # Run the application 
 shinyApp(ui = ui, server = server)
-
